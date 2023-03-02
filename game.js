@@ -18,7 +18,7 @@ const giftPosition = {
     x: undefined,
     y: undefined
 }
-
+let level = 0;
 let bombasPosition = []
 
 window.addEventListener('load',setCanvasSize);
@@ -45,9 +45,8 @@ function setCanvasSize() {
 function startGame() {
     game.font = elementsSize + 'px verdana';
     game.textAlign = 'end';
-
-    const map = maps[0]
-    const mapRows = map.trim().split('\n')
+    const map = maps[level];
+    const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
 
     bombasPosition = [];
@@ -63,14 +62,10 @@ function startGame() {
                 if (!playerPosition.x && !playerPosition.y) {
                     playerPosition.x = posX;
                     playerPosition.y = posY;
-                    console.log({posX, posY});
                 }
             }else if (col == "I") {
-                if (!giftPosition.x && !giftPosition.y) {
-                    giftPosition.x = posX
-                    giftPosition.y = posY
-                    console.log({posX, posY});
-                }
+                    giftPosition.x = posX;
+                    giftPosition.y = posY;
             }else if (col == "X") {
                 bombasPosition.push({
                     x: posX,
@@ -89,7 +84,7 @@ function movePlayer() {
     const colicion = colicionX && colicionY;
 
     if (colicion) {
-        console.log('super, pasaste de nivel');
+        levelWin();
     }
 
     const bombaCollision = bombasPosition.find(bomba =>{
@@ -99,10 +94,20 @@ function movePlayer() {
     })
 
     if (bombaCollision) {
-        console.log('conduzca bien ');
+        levelFail();
     }
 
     game.fillText(emojis['PLAYER'],playerPosition.x,playerPosition.y);    
+}
+function levelFail() {
+    console.log('noooo');
+    playerPosition.x = undefined;
+    playerPosition.y = undefined;
+    startGame();
+}
+function levelWin() {
+    level++;
+    startGame();
 }
 function moveByKeys(event) {
     switch (event.code) {
@@ -125,12 +130,12 @@ function moveByKeys(event) {
             break;
     }
 }
-function moveUp() {
- console.log('arriba');   
+function moveUp() {  
  if ((playerPosition.y - elementsSize) < elementsSize-1) {
     console.log('no se puede');
  }else{
     playerPosition.y -= elementsSize;
+    console.log('arriba'); 
     startGame();
  }
  
